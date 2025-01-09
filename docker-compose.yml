@@ -1,0 +1,22 @@
+version: "3"
+services:
+  opensearch:
+    image: opensearchproject/opensearch:2.18.0
+    container_name: opensearch
+    environment:
+      - discovery.type=single-node
+      - plugins.security.ssl.http.enabled=false
+      - OPENSEARCH_INITIAL_ADMIN_PASSWORD=P4-v6d=f205.21
+    ports:
+      - "9200:9200"
+      - "9600:9600"
+    volumes:
+      - opensearch-data:/usr/share/opensearch/data
+    networks:
+      - opensearch-net
+volumes:
+  opensearch-data:
+    driver: local
+networks:
+  opensearch-net:
+    driver: bridge
