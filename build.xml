@@ -81,7 +81,6 @@
                debug="true"
                source="17" target="17">
             <classpath>
-                <!-- на класспасе нужны и библиотеки, и уже скомпилированные main‑классы -->
                 <path refid="project.classpath"/>
                 <pathelement location="${classes.dir}"/>
             </classpath>
