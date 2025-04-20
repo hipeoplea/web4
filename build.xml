@@ -42,7 +42,7 @@
                      conf="default,test"/>
     </target>
 
-    <target name="compile" depends="resolve-deps">
+    <target name="compile" depends="resolve-deps,resources">
         <javac srcdir="${src.dir}"
                destdir="${classes.dir}"
                includeantruntime="false"
@@ -54,7 +54,10 @@
         <compilerarg pathref="lombok.processor.path"/>
         </javac>
     </target>
-
+    <target name="resources" depends="init">
+        <copy todir="${classes.dir}">
+        </copy>
+    </target>
     <target name="build" depends="compile">
         <jar destfile="${dist.dir}/${jar.name}"
              basedir="${classes.dir}">
