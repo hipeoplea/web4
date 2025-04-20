@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="web4" default="build" basedir=".">
+<project name="web4"
+         default="build"
+         basedir="."
+         xmlns:ivy="antlib:org.apache.ivy.ant">
+
+    <!-- Подгружаем свойства -->
     <property file="build.properties"/>
+
+    <!-- Пути к зависимостям проекта -->
     <path id="lombok.processor.path">
         <fileset dir="${lib.dir}">
             <include name="**/lombok-*.jar"/>
@@ -16,19 +23,21 @@
             <include name="**/*.jar"/>
         </fileset>
     </path>
+
+    <!-- Ant‑contrib -->
     <taskdef resource="net/sf/antcontrib/antlib.xml">
         <classpath>
             <pathelement location="${lib.dir}/ant-contrib-1.0b3.jar"/>
         </classpath>
     </taskdef>
 
-    <taskdef name="ivyResolve"
-             classname="org.apache.ivy.ant.IvyResolve"
-             classpath="${ivy.jar}"/>
-    <taskdef name="ivyRetrieve"
-             classname="org.apache.ivy.ant.IvyRetrieve"
-             classpath="${ivy.jar}"/>
+    <!-- Подключаем Ivy ОДНИМ ClassLoader’ом -->
+    <typedef uri="antlib:org.apache.ivy.ant"
+             resource="org/apache/ivy/ant/antlib.xml">
+        <classpath path="${ivy.jar}"/>
+    </typedef>
 
+    <!-- Подготовка директорий -->
     <target name="init">
         <mkdir dir="${classes.dir}"/>
         <mkdir dir="${test.classes.dir}"/>
@@ -36,32 +45,36 @@
         <mkdir dir="${dist.dir}"/>
     </target>
 
+    <!-- Очистка предыдущих сборок -->
     <target name="clean">
         <delete dir="${build.dir}"/>
         <delete dir="${dist.dir}"/>
     </target>
 
+    <!-- Разрешение и загрузка зависимостей через Ivy -->
     <target name="resolve-deps">
-        <ivyResolve/>
-        <ivyRetrieve pattern="${lib.dir}/[organisation]/[module]/[artifact]-[revision].[ext]"
-                     conf="default,test"/>
+        <ivy:settings file="ivysettings.xml"/>
+        <ivy:resolve/>
+        <ivy:retrieve
+                pattern="${lib.dir}/[organisation]/[module]/[artifact]-[revision].[ext]"
+                conf="default,test"/>
     </target>
 
+    <!-- Компиляция основного кода -->
     <target name="compile" depends="init,resolve-deps">
         <javac srcdir="${src.dir}"
                destdir="${classes.dir}"
                includeantruntime="false"
                debug="true"
-               source="17"
-               target="17">
-        <classpath refid="project.classpath"/>
-        <compilerarg line="-parameters"/>
-        <compilerarg value="-processorpath"/>
-        <compilerarg value="lib/org.projectlombok/lombok/lombok-1.18.30.jar:lib/org.springframework.boot/spring-boot-configuration-processor/spring-boot-configuration-processor-3.4.4.jar
-        "/>
-
+               source="17" target="17">
+            <classpath refid="project.classpath"/>
+            <compilerarg line="-parameters"/>
+            <compilerarg value="-processorpath"/>
+            <compilerarg value="lib/org.projectlombok/lombok/lombok-1.18.30.jar:lib/org.springframework.boot/spring-boot-configuration-processor/spring-boot-configuration-processor-3.4.4.jar"/>
         </javac>
     </target>
+
+    <!-- Сборка jar -->
     <target name="build" depends="compile">
         <jar destfile="${dist.dir}/${jar.name}"
              basedir="${classes.dir}">
@@ -69,11 +82,11 @@
                 <attribute name="Main-Class" value="${main.class}"/>
                 <attribute name="Implementation-Version" value="${version}"/>
             </manifest>
-            <fileset dir="${classes.dir}">
-            </fileset>
             <zipgroupfileset dir="${lib.dir}" includes="**/*.jar"/>
         </jar>
     </target>
+
+    <!-- Компиляция тестов -->
     <target name="compile-tests" depends="compile">
         <javac srcdir="${test.dir}"
                destdir="${test.classes.dir}"
@@ -87,6 +100,7 @@
         </javac>
     </target>
 
+    <!-- Запуск JUnit‑тестов -->
     <target name="test" depends="compile-tests">
         <mkdir dir="${reports.dir}"/>
         <junit printsummary="yes" haltonfailure="yes" fork="true">
@@ -100,7 +114,7 @@
             </classpath>
             <batchtest todir="${reports.dir}">
                 <fileset dir="${test.classes.dir}">
-                    <include name="**/*Test.class"/>
+                    <include name="**/*Test*.class"/>
                 </fileset>
             </batchtest>
             <formatter type="plain"/>
@@ -108,63 +122,12 @@
         </junit>
     </target>
 
-
+    <!-- Проигрывание музыки -->
     <target name="music" depends="build">
-        <echo message="Playing music…"/>
+        <echo message="Playing ${music.file}…"/>
         <exec executable="${music.cmd}" failonerror="false">
             <arg value="${music.file}"/>
         </exec>
     </target>
 
-<!--    <target name="history">-->
-<!--        &lt;!&ndash; получаем все SHA коммитов &ndash;&gt;-->
-<!--        <exec executable="${git.executable}" outputproperty="commits">-->
-<!--            <arg value="rev-list"/>-->
-<!--            <arg value="HEAD"/>-->
-<!--        </exec>-->
-
-<!--        <property name="last.good.commit" value=""/>-->
-<!--        <property name="prev.commit"      value=""/>-->
-
-<!--        <for param="commit" list="${commits}" delimiter="\n">-->
-<!--            <sequential>-->
-<!--                <property name="candidate.commit" value="@{commit}"/>-->
-<!--                <echo message="Trying commit ${candidate.commit}"/>-->
-<!--                <exec executable="${git.executable}">-->
-<!--                    <arg value="checkout"/>-->
-<!--                    <arg value="${candidate.commit}"/>-->
-<!--                </exec>-->
-<!--                <antcall target="compile"/>-->
-<!--                <condition property="compile.ok">-->
-<!--                    <available file="${classes.dir}"/>-->
-<!--                </condition>-->
-<!--                <if>-->
-<!--                    <isset property="compile.ok">-->
-<!--                    <then>-->
-<!--                        <property name="last.good.commit" value="${candidate.commit}"/>-->
-<!--                        <break/>-->
-<!--                    </then>-->
-<!--                    <else>-->
-<!--                        <property name="prev.commit" value="${candidate.commit}"/>-->
-<!--                    </else>-->
-<!--                </if>-->
-<!--            </sequential>-->
-<!--        </for>-->
-
-<!--        <if>-->
-<!--            <isset property="last.good.commit">-->
-<!--            <then>-->
-<!--                <echo message="Found working commit ${last.good.commit}"/>-->
-<!--                <exec executable="${git.executable}">-->
-<!--                    <arg value="diff"/>-->
-<!--                    <arg value="${last.good.commit}..${prev.commit}"/>-->
-<!--                    <redirector output="${build.dir}/changes.diff"/>-->
-<!--                </exec>-->
-<!--                <echo message="Diff saved to ${build.dir}/changes.diff"/>-->
-<!--            </then>-->
-<!--            <else>-->
-<!--                <echo message="No working commit found (reached first revision)"/>-->
-<!--            </else>-->
-<!--        </if>-->
-<!--    </target>-->
 </project>
