@@ -42,7 +42,7 @@
                      conf="default,test"/>
     </target>
 
-    <target name="compile" depends="init,resolve-deps">
+    <target name="compile" depends="init,resolve-deps, resources">
         <javac srcdir="${src.dir}"
                destdir="${classes.dir}"
                includeantruntime="false"
@@ -54,7 +54,13 @@
         <compilerarg pathref="lombok.processor.path"/>
         </javac>
     </target>
-
+    <target name="resources" depends="init">
+        <copy todir="${classes.dir}">
+            <fileset dir="${resources.dir}">
+                <include name="**/*"/>
+            </fileset>
+        </copy>
+    </target>
     <target name="build" depends="compile">
         <jar destfile="${dist.dir}/${jar.name}"
              basedir="${classes.dir}">
@@ -62,7 +68,6 @@
                 <attribute name="Main-Class" value="${main.class}"/>
                 <attribute name="Implementation-Version" value="${version}"/>
             </manifest>
-            <fileset dir="${classes.dir}"/>
             <zipgroupfileset dir="${lib.dir}" includes="**/*.jar"/>
         </jar>
     </target>
