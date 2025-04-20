@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="web4" default="build" basedir=".">
+    <property file="build.properties"/>
+
+    <taskdef resource="net/sf/antcontrib/antlib.xml">
+        <classpath>
+            <pathelement location="${lib.dir}/ant-contrib-1.0b3.jar"/>
+        </classpath>
+    </taskdef>
+
+    <taskdef name="ivy-init"
+             classname="org.apache.ivy.ant.IvyInit"
+             classpath="${ivy.jar}"/>
+    <taskdef name="ivy-retrieve"
+             classname="org.apache.ivy.ant.IvyRetrieve"
+             classpath="${ivy.jar}"/>
+
+    <path id="project.classpath">
+        <fileset dir="${lib.dir}">
+            <include name="**/*.jar"/>
+        </fileset>
+    </path>
+    <target name="init">
+        <mkdir dir="${classes.dir}"/>
+        <mkdir dir="${test.classes.dir}"/>
+        <mkdir dir="${reports.dir}"/>
+        <mkdir dir="${dist.dir}"/>
+    </target>
+    <target name="clean">
+        <delete dir="${build.dir}"/>
+        <delete dir="${dist.dir}"/>
+    </target>
+</project>

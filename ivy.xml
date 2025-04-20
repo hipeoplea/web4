@@ -1,0 +1,80 @@
+<ivy-module version="2.0">
+    <info organisation="org.example" module="web4"/>
+    <configurations>
+        <conf name="default" description="compile+runtime dependencies"/>
+        <conf name="test"    description="unit-test dependencies" extends="default"/>
+    </configurations>
+
+    <dependencies>
+        <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-web -->
+        <dependency org="org.springframework.boot"
+                    name="spring-boot-starter-web"
+                    rev="3.4.4"
+                    conf="default"/>
+        <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-data-jpa -->
+        <dependency org="org.springframework.boot"
+                    name="spring-boot-starter-data-jpa"
+                    rev="3.4.4"
+                    conf="default"/>
+        <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-actuator -->
+        <dependency org="org.springframework.boot"
+                    name="spring-boot-starter-actuator"
+                    rev="3.4.4"
+                    conf="default"/>
+        <!-- https://mvnrepository.com/artifact/org.postgresql/postgresql -->
+        <dependency org="org.postgresql"
+                    name="postgresql"
+                    rev="42.7.2"
+                    conf="default"/>
+        <!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
+        <dependency org="org.projectlombok"
+                    name="lombok"
+                    rev="1.18.24"
+                    conf="default"/>
+        <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-logging -->
+        <dependency org="org.springframework.boot"
+                    name="spring-boot-starter-logging"
+                    rev="3.4.2"
+                    conf="default"/>
+        <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-security -->
+        <dependency org="org.springframework.boot"
+                    name="spring-boot-starter-security"
+                    rev="3.4.4"
+                    conf="default"/>
+        <!-- JWT -->
+        <dependency org="io.jsonwebtoken"
+                    name="jjwt-api"
+                    rev="0.11.5"
+                    conf="default"/>
+        <dependency org="io.jsonwebtoken"
+                    name="jjwt-impl"
+                    rev="0.11.5"
+                    conf="default"/>
+        <dependency org="io.jsonwebtoken"
+                    name="jjwt-jackson"
+                    rev="0.11.5"
+                    conf="default"/>
+        <!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api -->
+        <dependency org="org.junit.jupiter"
+                    name="junit-jupiter-api"
+                    rev="5.11.4"
+                    conf="test"/>
+        <!-- https://mvnrepository.com/artifact/org.mockito/mockito-core -->
+        <dependency org="org.mockito"
+                    name="mockito-core"
+                    rev="5.14.2"
+                    conf="test"/>
+        <!-- https://mvnrepository.com/artifact/org.mockito/mockito-junit-jupiter -->
+        <dependency org="org.mockito"
+                    name="mockito-junit-jupiter"
+                    rev="5.14.2"
+                    conf="test"/>
+
+    </dependencies>
+
+    <settings defaultResolver="default">
+        <resolvers>
+            <ibiblio name="central" m2compatible="true"/>
+        </resolvers>
+    </settings>
+</ivy-module>
