@@ -45,6 +45,11 @@
                     name="spring-boot-starter-security"
                     rev="3.4.4"
                     conf="default"/>
+        <!-- https://mvnrepository.com/artifact/junit/junit -->
+        <dependency org="junit"
+                    name="junit"
+                    rev="4.13.2"
+                    conf="default"/>
         <!-- JWT -->
         <dependency org="io.jsonwebtoken"
                     name="jjwt-api"
