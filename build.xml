@@ -55,6 +55,7 @@
                source="17"
                target="17">
         <classpath refid="project.classpath"/>
+        <compilerarg line="-parameters"/>
         <compilerarg value="-processorpath"/>
         <compilerarg value="lib/org.projectlombok/lombok/lombok-1.18.30.jar:lib/org.springframework.boot/spring-boot-configuration-processor/spring-boot-configuration-processor-3.4.4.jar
         "/>
