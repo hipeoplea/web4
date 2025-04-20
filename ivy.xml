@@ -71,10 +71,4 @@
                     conf="test"/>
 
     </dependencies>
-
-    <settings defaultResolver="default">
-        <resolvers>
-            <ibiblio name="central" m2compatible="true"/>
-        </resolvers>
-    </settings>
 </ivy-module>
