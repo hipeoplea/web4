@@ -112,7 +112,9 @@
 
     <target name="music" depends="build">
         <echo message="Playing music…"/>
-        <exec executable="${music.command}" failonerror="false"/>
+        <exec executable="${music.cmd}" failonerror="false">
+            <arg value="${music.file}"/>
+        </exec>
     </target>
 
 <!--    <target name="history">-->
