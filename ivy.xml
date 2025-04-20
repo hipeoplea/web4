@@ -26,6 +26,10 @@
                     name="postgresql"
                     rev="42.7.1"
                     conf="default"/>
+        <dependency org="org.springframework.boot"
+                    name="spring-boot-configuration-processor"
+                    rev="3.4.4"
+                    conf="default"/>
         <!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
         <dependency org="org.projectlombok"
                     name="lombok"

@@ -20,7 +20,7 @@ public class LoginController {
     AuthenticationService authenticationService;
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestParam String username, @RequestParam String password) {
+    public ResponseEntity<String> login(@RequestParam("username") String username, @RequestParam("password") String password) {
         if (authenticationService.authenticate(username, password)) {
             String token = authenticationService.generateToken(username);
             return ResponseEntity.ok(token);
@@ -29,7 +29,7 @@ public class LoginController {
         }
     }
     @PostMapping("/register")
-    public ResponseEntity<String> register(@RequestParam String username, @RequestParam String password) {
+    public ResponseEntity<String> register(@RequestParam("username") String username, @RequestParam("password") String password) {
         authenticationService.register(username, password);
         return ResponseEntity.ok().build();
     }

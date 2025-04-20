@@ -6,6 +6,11 @@
             <include name="**/lombok-*.jar"/>
         </fileset>
     </path>
+    <path id="spring.processor.path">
+        <fileset dir="${lib.dir}">
+            <include name="**/spring-boot-configuration-processor-*.jar"/>
+        </fileset>
+    </path>
     <path id="project.classpath">
         <fileset dir="${lib.dir}">
             <include name="**/*.jar"/>
@@ -51,7 +56,9 @@
                target="17">
         <classpath refid="project.classpath"/>
         <compilerarg value="-processorpath"/>
-        <compilerarg pathref="lombok.processor.path"/>
+        <compilerarg value="lib/org.projectlombok/lombok/lombok-1.18.30.jar:lib/org.springframework.boot/spring-boot-configuration-processor/spring-boot-configuration-processor-3.4.4.jar
+        "/>
+
         </javac>
     </target>
     <target name="build" depends="compile">
