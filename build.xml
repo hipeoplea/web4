@@ -8,26 +8,127 @@
         </classpath>
     </taskdef>
 
-    <taskdef name="ivy-init"
-             classname="org.apache.ivy.ant.IvyInit"
-             classpath="${ivy.jar}"/>
-    <taskdef name="ivy-retrieve"
-             classname="org.apache.ivy.ant.IvyRetrieve"
-             classpath="${ivy.jar}"/>
+    <typedef resource="org/apache/ivy/ant/antlib.xml">
+        <classpath>
+            <pathelement location="${ivy.jar}"/>
+        </classpath>
+    </typedef>
 
     <path id="project.classpath">
         <fileset dir="${lib.dir}">
             <include name="**/*.jar"/>
         </fileset>
     </path>
+
     <target name="init">
         <mkdir dir="${classes.dir}"/>
         <mkdir dir="${test.classes.dir}"/>
         <mkdir dir="${reports.dir}"/>
         <mkdir dir="${dist.dir}"/>
     </target>
+
     <target name="clean">
         <delete dir="${build.dir}"/>
         <delete dir="${dist.dir}"/>
+    </target>
+
+    <target name="resolve-deps">
+    </target>
+
+    <target name="compile" depends="init,resolve-deps">
+        <javac srcdir="${src.dir}"
+               destdir="${classes.dir}"
+               includeantruntime="false"
+               debug="true">
+            <classpath refid="project.classpath"/>
+        </javac>
+    </target>
+
+    <target name="build" depends="compile">
+        <jar destfile="${dist.dir}/${jar.name}"
+             basedir="${classes.dir}">
+            <manifest>
+                <attribute name="Main-Class" value="${main.class}"/>
+                <attribute name="Implementation-Version" value="${version}"/>
+            </manifest>
+        </jar>
+    </target>
+
+    <target name="test" depends="build">
+        <junit printsummary="yes" haltonfailure="yes" fork="true">
+            <classpath>
+                <pathelement location="${classes.dir}"/>
+                <pathelement location="${test.classes.dir}"/>
+                <fileset dir="${lib.dir}">
+                    <include name="junit-jupiter-api-*.jar"/>
+                    <include name="mockito-core-*.jar"/>
+                    <include name="mockito-junit-jupiter-*.jar"/>
+                </fileset>
+            </classpath>
+            <batchtest todir="${reports.dir}">
+                <fileset dir="${test.dir}">
+                    <include name="**/*Test.java"/>
+                </fileset>
+            </batchtest>
+            <formatter type="plain"/>
+            <formatter type="xml"/>
+        </junit>
+    </target>
+
+    <target name="music" depends="build">
+        <echo message="Playing music…"/>
+        <exec executable="${music.command}" failonerror="false"/>
+    </target>
+
+    <target name="history">
+        <!-- получаем все SHA коммитов -->
+        <exec executable="${git.executable}" outputproperty="commits">
+            <arg value="rev-list"/>
+            <arg value="HEAD"/>
+        </exec>
+
+        <property name="last.good.commit" value=""/>
+        <property name="prev.commit"      value=""/>
+
+        <for param="commit" list="${commits}" delimiter="\n">
+            <sequential>
+                <property name="candidate.commit" value="@{commit}"/>
+                <echo message="Trying commit ${candidate.commit}"/>
+                <exec executable="${git.executable}">
+                    <arg value="checkout"/>
+                    <arg value="${candidate.commit}"/>
+                </exec>
+                <antcall target="compile"/>
+                <condition property="compile.ok">
+                    <available file="${classes.dir}"/>
+                </condition>
+                <if>
+                    <isset property="compile.ok">
+                    <then>
+                        <property name="last.good.commit" value="${candidate.commit}"/>
+                        <break/>
+                    </then>
+                    <else>
+                        <property name="prev.commit" value="${candidate.commit}"/>
+                    </else>
+                </if>
+            </sequential>
+        </for>
+
+        <if>
+            <isset property="last.good.commit">
+            <then>
+                <echo message="Found working commit ${last.good.commit}"/>
+                <exec executable="${git.executable}">
+                    <arg value="diff"/>
+                    <arg value="${last.good.commit}..${prev.commit}"/>
+                    <redirector output="${build.dir}/changes.diff"/>
+                </exec>
+                <echo message="Diff saved to ${build.dir}/changes.diff"/>
+            </then>
+            <else>
+                <echo message="No working commit found (reached first revision)"/>
+            </else>
+        </if>
     </target>
 </project>
