@@ -24,7 +24,7 @@
         <!-- https://mvnrepository.com/artifact/org.postgresql/postgresql -->
         <dependency org="org.postgresql"
                     name="postgresql"
-                    rev="42.7.2"
+                    rev="42.7.1"
                     conf="default"/>
         <!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
         <dependency org="org.projectlombok"

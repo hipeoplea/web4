@@ -20,11 +20,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@RequiredArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
     AuthenticationService authenticationService;
-    public JwtFilter(AuthenticationService authenticationService){
-        this.authenticationService = authenticationService;
-    }
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
