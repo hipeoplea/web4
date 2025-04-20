@@ -29,7 +29,7 @@
         <!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
         <dependency org="org.projectlombok"
                     name="lombok"
-                    rev="1.18.24"
+                    rev="1.18.30"
                     conf="default"/>
         <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-logging -->
         <dependency org="org.springframework.boot"

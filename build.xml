@@ -1,7 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="web4" default="build" basedir=".">
     <property file="build.properties"/>
-
+    <path id="lombok.processor.path">
+        <fileset dir="${lib.dir}">
+            <include name="**/lombok-*.jar"/>
+        </fileset>
+    </path>
+    <path id="project.classpath">
+        <fileset dir="${lib.dir}">
+            <include name="**/*.jar"/>
+        </fileset>
+    </path>
     <taskdef resource="net/sf/antcontrib/antlib.xml">
         <classpath>
             <pathelement location="${lib.dir}/ant-contrib-1.0b3.jar"/>
@@ -14,12 +23,6 @@
     <taskdef name="ivyRetrieve"
              classname="org.apache.ivy.ant.IvyRetrieve"
              classpath="${ivy.jar}"/>
-
-    <path id="project.classpath">
-        <fileset dir="${lib.dir}">
-            <include name="**/*.jar"/>
-        </fileset>
-    </path>
 
     <target name="init">
         <mkdir dir="${classes.dir}"/>
@@ -44,9 +47,11 @@
                destdir="${classes.dir}"
                includeantruntime="false"
                debug="true">
-            <classpath refid="project.classpath"/>
-        </javac>
-    </target>
+        <classpath refid="project.classpath"/>
+        <compilerarg value="-processorpath"/>
+        <compilerarg pathref="lombok.processor.path"/>
+    </javac>
+</target>
 
     <target name="build" depends="compile">
         <jar destfile="${dist.dir}/${jar.name}"
