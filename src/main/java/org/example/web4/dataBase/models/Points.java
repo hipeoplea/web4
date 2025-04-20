@@ -9,16 +9,17 @@ import lombok.experimental.FieldDefaults;
 import java.util.UUID;
 
 @Entity
-@Getter
-@Setter
+@Table(name = "points")
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@Table(name = "users")
-public class User {
-
-    @Id
+@Setter
+@Getter
+public class Points {
     @GeneratedValue(strategy = GenerationType.UUID)
+    @Id
     UUID id;
-    String username;
-    @Column(name = "password_hash")
-    String passwordHash;
+    String userId;
+    float x;
+    float y;
+    float r;
+    boolean ishit;
 }

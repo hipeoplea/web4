@@ -1,6 +1,10 @@
 package org.example.web4.configs;
 
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.example.web4.components.JwtFilter;
+import org.example.web4.services.AuthenticationService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -8,15 +12,11 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
 @Configuration
 public class SecurityConfig {
-
-    @Autowired
-    private JwtFilter jwtFilter;
 
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
@@ -24,7 +24,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtFilter jwtFilter) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(request -> {
@@ -42,5 +42,9 @@ public class SecurityConfig {
                 .addFilterBefore(jwtFilter, org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter.class); // Добавляем фильтр JWT перед стандартным фильтром аутентификации
 
         return http.build();
+    }
+    @Bean
+    public JwtFilter jwtFilter(AuthenticationService authenticationService) {
+        return new JwtFilter(authenticationService);
     }
 }

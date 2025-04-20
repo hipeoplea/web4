@@ -2,8 +2,10 @@ package org.example.web4.services;
 
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.example.web4.dataBase.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -15,16 +17,11 @@ import org.example.web4.dataBase.models.User;
 import javax.crypto.SecretKey;
 
 @Service
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@RequiredArgsConstructor
 public class AuthenticationService {
-
-    @Autowired
-    private UserRepository userRepository;
-
-    private BCryptPasswordEncoder passwordEncoder;
-
-    public AuthenticationService() {
-        this.passwordEncoder = new BCryptPasswordEncoder();
-    }
+    UserRepository userRepository;
+    BCryptPasswordEncoder passwordEncoder;
 
     public boolean authenticate(String username, String password) {
         Optional<User> userOptional = userRepository.findByUsername(username);
@@ -35,16 +32,16 @@ public class AuthenticationService {
         return false;
     }
 
-//    public void register(String username, String password) {
-//        if (userRepository.findByUsername(username).isPresent()) {
-//            throw new IllegalArgumentException("User already exists");
-//        }
-//        String passwordHash = passwordEncoder.encode(password);
-//        User user = new User();
-//        user.setUsername(username);
-//        user.setPasswordHash(passwordHash);
-//        userRepository.save(user);
-//    }
+    public void register(String username, String password) {
+        if (userRepository.findByUsername(username).isPresent()) {
+            throw new IllegalArgumentException("User already exists");
+        }
+        String passwordHash = passwordEncoder.encode(password);
+        User user = new User();
+        user.setUsername(username);
+        user.setPasswordHash(passwordHash);
+        userRepository.save(user);
+    }
 
     public String generateToken(String username) {
         SecretKey key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
